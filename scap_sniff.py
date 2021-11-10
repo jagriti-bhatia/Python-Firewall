@@ -15,4 +15,6 @@ signal.signal(signal.SIGINT, signal_handler)
 
 while True:
     a=sniff(count = 1) 
-    a.nsummary() 
+    #a.nsummary() 
+    a[0].show()
+    break
