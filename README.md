@@ -1,8 +1,8 @@
 # Python-Firewall
-The above code is a simple packet filtering firewall. The firewall looks for TCP, and UDP packets, compares the header information of thosto the rules in the rule list(Rules.csv). If any matching rule is found, the required action is performed(accept/ deny). If no exact rule is found to match with the packet heade information, the packet is dropped. 
+The above code is a simple packet filtering firewall. The firewall looks for TCP, and UDP packets, compares the header information of those to the rules in the rule list(Rules.csv). If any matching rule is found, the required action is performed(accept/ deny). If no exact rule is found to match with the packet header information, the packet is dropped. 
 
 # System Requirements  
-- Ubuntu
+- Any Linux distribution
 - required python imports(psutil)  
 
 # Running instructions  
