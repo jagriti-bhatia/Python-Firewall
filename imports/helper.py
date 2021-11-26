@@ -1,14 +1,9 @@
-import  json, psutil
+import psutil
 
 PROTOCOLS = {
     6: "TCP",
     17: "UDP"
 }
-
-def compare_rules(rule1, rule2):
-    if str(rule1).strip() == str(rule2).strip():
-        return True
-    return False
 
 def get_interfaces():
     addrs = psutil.net_if_addrs()
@@ -28,6 +23,3 @@ def get_interfaces():
     except Exception as e:
         print(f"Error getting interfaces : {e}")
         exit()
-
-def pprint(string):
-    print(json.dumps(string, indent=2))
