@@ -1,5 +1,3 @@
-#import random
-#import time
 import struct
 import socket
 import binascii
@@ -11,7 +9,7 @@ def mac_addr(mac_add_bytes):
 
 def ethernet_frame(data):
     dest_mac, src_mac, eth_protocol = struct.unpack('!6s6sH', data[:14])
-    return mac_addr(dest_mac), mac_addr(src_mac), socket.htons(eth_protocol), data
+    return mac_addr(dest_mac), mac_addr(src_mac), socket.htons(eth_protocol), data[14:]
 
 
 def ipv4_packet(ip_header):
@@ -19,21 +17,21 @@ def ipv4_packet(ip_header):
 
     protocol = iph[6]
 
-    s_addr = socket.inet_ntoa(iph[8])
-    d_addr = socket.inet_ntoa(iph[9])
+    s_addr = iph[8]
+    d_addr = iph[9]
 
-    return s_addr, d_addr, protocol
+    return format_ipv4(s_addr),format_ipv4(d_addr), protocol
+
+def format_ipv4(addr):
+    return '.'.join(map(str,addr))
 
 def tcp_packet(packet_buffer):
-    tcp_raw_data = struct.unpack("!2s2s4s4s2s2s2s2s", packet_buffer)
-    src_port = binary_to_ascii(tcp_raw_data[0])
-    dst_port = binary_to_ascii(tcp_raw_data[1])
+    tcp_raw_data = struct.unpack("!HH", packet_buffer[0:4])
+    src_port = tcp_raw_data[0]
+    dst_port = tcp_raw_data[1]
 
-    return int(src_port, 16), int(dst_port, 16)
-
-def binary_to_ascii(binary_data):
-    return binascii.hexlify(binary_data).decode("utf-8")
+    return src_port, dst_port
 
 def udp_packet(data):
-    src_port, dest_port, size = struct.unpack('!HH2xH', data)
-    return src_port, dest_port, size, data[8:]
+    src_port, dest_port = struct.unpack('!HH', data)
+    return src_port, dest_port
