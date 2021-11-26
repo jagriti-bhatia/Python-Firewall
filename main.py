@@ -1,10 +1,6 @@
 # importing modules
 import socket
-#import time
 from netaddr import IPNetwork
-#import psutil
-#import csv
-#import datetime
 import logging
 
 # inporting custom modules
@@ -24,9 +20,7 @@ def sendpacket(conn: socket.socket, payload, dst_ip):
     except PermissionError as broadcastError:
         print(broadcastError)
         pass
-    except OSError as Error:
-        print(Error)
-        pass
+
 
 def bind_sockets(interface):
     # creating a socket connection to listen for packets
@@ -38,21 +32,21 @@ def bind_sockets(interface):
             dest_mac, src_mac, eth_protocol, eth_data = ethernet_frame(raw_data)  # gather the frame details
             src_port, dst_port = 0, 0
             if eth_protocol == 8:
-                s_addr, d_addr, protocol = ipv4_packet(eth_data[14:34])
+                s_addr, d_addr, protocol = ipv4_packet(eth_data)
                 if protocol == 6:
                     # extracting the TCP source and destination ports
                     src_port, dst_port = tcp_packet(eth_data[34:54])
 
                 elif protocol == 17:
                     # extracting the UDP source and destination ports
-                    src_port, dest_port, size, data = udp_packet(eth_data[34:42])
+                    src_port, dst_port = udp_packet(eth_data[34:38])
                 # all the traffic is denied by default
                 # all routes in the acl will be allowed
                 if validate_with_route_table(s_addr, d_addr, src_port, dst_port):
                     sendpacket(send_sock, eth_data[14:], d_addr)
-                    logging.info(f" <ALLOWED> ({s_addr},{d_addr}) >  {PROTOCOLS[protocol]}")
+                    logging.info(f" <ALLOWED> ({s_addr},{d_addr}) > ({src_port}, {dst_port}) >{ PROTOCOLS[protocol]}")
                 else:
-                    logging.error(f" <FAILED ROUTE> ({s_addr}, {d_addr}) >  {PROTOCOLS[protocol]}")
+                    logging.error(f" <FAILED ROUTE> ({s_addr}, {d_addr}) > ({src_port}, {dst_port}) > {PROTOCOLS[protocol]}")
             
     except KeyboardInterrupt:
         print("\nFIREWALL STOPPED")
@@ -61,8 +55,7 @@ def bind_sockets(interface):
 if __name__ == "__main__":
     interfaces = get_interfaces()
 
-    print(len(interfaces.items()))
     print("FIREWALL IS RUNNING ")
     for key in interfaces.items():
-        print(key)
+        #print(key)
         bind_sockets(key)
