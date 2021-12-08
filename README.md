@@ -6,8 +6,13 @@ The above code is a simple packet filtering firewall. The firewall looks for TCP
 - required python imports(psutil)  
 
 # Running instructions  
+### Cloning the folder into local system
 ```sh
 git clone git@github.com:preethika-ajay/Python-Firewall.git
 cd Python-Firewall
+```  
+
+### Running the project  
+```sh
 sudo python3 main.py
 ```
